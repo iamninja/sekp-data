@@ -2,3 +2,6 @@ Gemfile.lock
 
 # RVM related
 .ruby-gemset
+
+# Intermediate results
+data/*
