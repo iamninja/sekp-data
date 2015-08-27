@@ -5,3 +5,9 @@ Gemfile.lock
 
 # Intermediate results
 data/*
+
+# Vim related
+*.swp
+
+# Temp files
+test.rb
