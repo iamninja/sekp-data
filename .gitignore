@@ -10,7 +10,7 @@ data/*
 *.swp
 
 # Temp files
-test.rb
+test*.rb
 
 # Firebase info
 firebase_cred.rb
