@@ -85,8 +85,10 @@ Dir.foreach(TXT_PATH) do |txtfile|
 	next if txtfile == '.' or txtfile == '..'
 
 	size = 0
+	filename = ""
 	File.open("#{TXT_PATH}/#{txtfile}", "r") { |file|
 		size = file.readlines.size
+		filename = File.basename(file, ".*")
 	}
 
 	# Skip files with less than 3 lines
@@ -102,60 +104,60 @@ Dir.foreach(TXT_PATH) do |txtfile|
 	# 	puts "End Printing"
 	# }
 
+	# Load lines of txtfile in memory
+	lines = File.readlines("#{TXT_PATH}/#{txtfile}")
 
+	# If the last line is number remove it from array
+	if /\d+/.match(lines[-1])
+		lines.delete_at(-1)
+	end
 
-	# Reopen the txtfile to read the data
-	File.open("#{TXT_PATH}/#{txtfile}", "r") { |file|
-		counter = 0
-		clean_line = Array.new
-		name_array = Array.new
-		hash = Hash.new
+	counter = 0
+	clean_line = Array.new
+	name_array = Array.new
+	hash = Hash.new
 
-		filename = File.basename(file, ".*")
-
-		# Scan lines and create hash with institution's data
-		file.each_line do |line|
-			if (line.include? ':')
-				value = clean_line.join(" ").gsub("\n", "")
-				if (value.include? ':')
-					value = value.slice(value.index(":")..-1).gsub(":", "").strip
-				end
-				hash[:"#{keys[counter]}"] = value
-				clean_line.clear
-				clean_line.push(line)
-				counter += 1
-			elsif (file.eof?)
-				clean_line.push(line)
-				value = clean_line.join(" ").gsub("\n", "")
-				if (value.include? ':')
-					value = value.slice(value.index(":")..-1).gsub(":", "").strip
-				end
-				hash[:"#{keys[counter]}"] = value
-			else
-				clean_line.push(line)
+	# Create hash from txfile
+	for line in lines do
+		if (line.include? ':')
+			value = clean_line.join(" ").gsub("\n", "")
+			if (value.include? ':')
+				value = value.slice(value.index(":")..-1).gsub(":", "").strip
 			end
-		end
-
-		# Get short short name if it exists
-		if hash[:name].include? "("
-			name_array = hash[:name].gsub("(", "@").gsub(")", "").partition("@").collect{ |item| item.strip }
-			hash[:name] = name_array.first
-			hash[:short] = name_array.last
+			hash[:"#{keys[counter]}"] = value
+			clean_line.clear
+			clean_line.push(line)
+			counter += 1
+			if (line == lines[-1])
+				value = clean_line.join(" ").gsub("\n", "")
+				if (value.include? ':')
+					value = value.slice(value.index(":")..-1).gsub(":", "").strip
+				end
+				hash[:"#{keys[counter]}"] = value
+			end
 		else
-			hash[:short] = ""
+			clean_line.push(line)
 		end
+	end
 
-		# :areas values tend to have a trailing number. Clean it and trim
-		if hash.key?(:areas)
-			# puts "yep"
-			hash[:areas] = hash[:areas].gsub(/\d+$/, "").strip
-		end
+	# Get short short name if it exists
+	if hash[:name].include? "("
+		name_array = hash[:name].gsub("(", "@").gsub(")", "").partition("@").collect{ |item| item.strip }
+		hash[:name] = name_array.first
+		hash[:short] = name_array.last
+	else
+		hash[:short] = ""
+	end
 
-		# Write json file for institution
-		File.open("data/json/#{filename}.json", "w") { |json_file|
-			print "\r#{json_file_counter}"
-			json_file.write(hash.to_json)
-		}
+	# :areas values tend to have a trailing number. Clean it and trim
+	if hash.key?(:areas)
+		hash[:areas] = hash[:areas].gsub(/\d+$/, "").strip
+	end
+
+	puts hash.to_json
+	# Write json file for institution
+	File.open("data/json/#{filename}.json", "w") { |json_file|
+		json_file.write(hash.to_json)
 	}
 end
 puts "\nDone"
