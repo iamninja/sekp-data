@@ -28,7 +28,7 @@ keys = ["name", "status", "year", "website", "description", "powers", "areas"]
 # pdf2htmlex/Kristin options
 opts = {
 	first_page: 11,
-	last_page: 30
+	last_page: 241
 }
 
 number_of_pages = opts[:last_page] - opts[:first_page]
@@ -154,7 +154,6 @@ Dir.foreach(TXT_PATH) do |txtfile|
 		hash[:areas] = hash[:areas].gsub(/\d+$/, "").strip
 	end
 
-	puts hash.to_json
 	# Write json file for institution
 	File.open("data/json/#{filename}.json", "w") { |json_file|
 		json_file.write(hash.to_json)

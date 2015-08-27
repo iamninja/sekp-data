@@ -17,6 +17,11 @@ Dir.foreach(JSON_PATH) do |jsonfile|
 	next if jsonfile == '.' or jsonfile =='..'
 
 	File.open("#{JSON_PATH}/#{jsonfile}") { |file|
-		firebase.push("institutions", JSON.parse(file.readlines[0]))
+		data = JSON.parse(file.readlines[0])
+		firebase.push("institutions", data)
+		# Log the name if jsonfile has missing values
+		if data.length < 8
+			puts jsonfile + "(#{data["name"]})" + "Total values: (#{data.length})"
+		end
 	}
 end
