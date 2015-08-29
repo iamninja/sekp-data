@@ -61,7 +61,8 @@ File.open(TXT_FILE, "r") { |file|
 	institution_counter = 0
 	counter = 0
 	file.each_line do |line|
-		print "\r#{institution_counter}"
+		puts line if line.strip == "/\d+/"
+		# print "\r#{institution_counter}"
 		if (line == "\n")
 			counter = 0
 			institution_counter += 1
@@ -90,6 +91,14 @@ Dir.foreach(TXT_PATH) do |txtfile|
 		size = file.readlines.size
 		filename = File.basename(file, ".*")
 	}
+
+	data = File.open("#{TXT_PATH}/#{txtfile}").read()
+	count = data.count(':')
+	next if count < 3
+
+	# Skip pathological cases
+	# next if (txtfile == "104.txt" ||
+	# 		txtfile == "110.txt")
 
 	# Skip files with less than 3 lines
 	next if size < 3
