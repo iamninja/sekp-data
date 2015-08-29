@@ -22,23 +22,106 @@ end
 bootstrap_dir(JSON_PATH)
 bootstrap_dir(TXT_PATH)
 
-# pdf2htmlex/Kristin options
-opts_koinoniki_asfalisi = {
-	first_page: 11,
-	last_page: 32
-}
-
 # Categories
-ka_hash = {
-	:id => 1,
-	:name => "Κοινωνική Ασφάλιση"
-}
+categories_array = [
+	[{
+		:id => 1,
+		:name => "Κοινωνική Ασφάλιση"
+	},
+	{
+		first_page: 11,
+		last_page: 32
+	}],
+	[{
+		:id => 2,
+		:name => "Κοινωνική Πρόνοια"
+	},
+	{
+		first_page: 35,
+		last_page: 51
+	}],
+	[{
+		:id => 3,
+		:name => "Πολιτική Υγείας"
+	},
+	{
+		first_page: 55,
+		last_page: 85
+	}],
+	[{
+		:id => 4,
+		:name => "Πολιτική Απασχόλισης"
+	},
+	{
+		first_page: 88,
+		last_page: 108
+	}],
+	[{
+		:id => 5,
+		:name => "Εκπαιδευτική Πολιτική"
+	},
+	{
+		first_page: 110,
+		last_page: 126
+	}],
+	[{
+		:id => 6,
+		:name => "Αντεγκληματική Πολιτική"
+	},
+	{
+		first_page: 153,
+		last_page: 166
+	}],
+	[{
+		:id => 7,
+		:name => "Μεταναστευτική Πολιτική"
+	},
+	{
+		first_page: 129,
+		last_page: 142
+	}],
+	[{
+		:id => 8,
+		:name => "Πολιτική Φύλου"
+	},
+	{
+		first_page: 169,
+		last_page: 177
+	}],
+	[{
+		:id => 9,
+		:name => "Στεγαστική Πολιτική"
+	},
+	{
+		first_page: 181,
+		last_page: 197
+	}],
+	[{
+		:id => 10,
+		:name => "Πολιτική Περιβάλλοντος"
+	},
+	{
+		first_page: 200,
+		last_page: 223
+	}],
+	[{
+		:id => 11,
+		:name => "Κοινωνική Έρευνα"
+	},
+	{
+		first_page: 226,
+		last_page: 241
+	}]
+]
 
 # number_of_pages = opts[:last_page] - opts[:first_page]
 
 def scrap_data(opts, code, category_hash)
 	# Keys for institution hash
 	keys = ["name", "status", "year", "website", "description", "powers", "areas"]
+
+	# Clear txts
+	bootstrap_dir(TXT_PATH)
 
 	# Generate the html file with pdf2htmlex
 	puts "Generating html file from pdf"
@@ -187,4 +270,7 @@ def scrap_data(opts, code, category_hash)
 	puts "\nDone"
 end
 
-scrap_data(opts_koinoniki_asfalisi, "ka", ka_hash)
+for institution_category in categories_array
+	puts "---------------" + institution_category[0][:name] + "---------------"
+	scrap_data(institution_category[1], institution_category[0][:id], institution_category[0])
+end
