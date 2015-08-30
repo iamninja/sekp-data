@@ -262,6 +262,15 @@ def scrap_data(opts, code, category_hash)
 		# Add category key
 		hash[:category] = category_hash
 
+		# Fix urls
+		if !(hash[:website] == "") and !(hash[:website].include?(":"))
+			if hash[:website].start_with?('http')
+				hash[:website].insert(4, ":")
+			else
+				hash[:website].prepend("http://")
+			end
+		end
+
 		# Write json file for institution
 		File.open("data/json/#{code}-#{filename}.json", "w") { |json_file|
 			json_file.write(hash.to_json)
